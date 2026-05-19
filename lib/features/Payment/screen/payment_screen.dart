@@ -8,7 +8,8 @@ import '../../../core/widget/app_button.dart';
 import '../../../core/widget/my_appbar.dart';
 
 class PaymentScreen extends StatefulWidget {
-  const PaymentScreen({super.key});
+  final String totalAmount;
+  const PaymentScreen({super.key, required this.totalAmount});
 
   @override
   State<PaymentScreen> createState() =>
@@ -128,7 +129,7 @@ class _PaymentScreenState
                           const SizedBox(height: 4),
 
                           Text(
-                            "₹1,240",
+                            "₹${widget.totalAmount}",
                             style:
                             GoogleFonts.poppins(
                               fontWeight:
@@ -140,42 +141,6 @@ class _PaymentScreenState
                             ),
                           ),
                         ],
-                      ),
-
-                      AppCard(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 8,
-                        ),
-                        color: AppColor.primaryPale,
-                        margin: EdgeInsets.zero,
-                        child: Row(
-                          children: [
-
-                            const Icon(
-                              Icons.discount,
-                              size: 18,
-                              color:
-                              AppColor.primary,
-                            ),
-
-                            const SizedBox(width: 6),
-
-                            Text(
-                              "10% OFF",
-                              style:
-                              GoogleFonts
-                                  .poppins(
-                                fontWeight:
-                                FontWeight
-                                    .w600,
-                                color:
-                                AppColor
-                                    .primary,
-                              ),
-                            ),
-                          ],
-                        ),
                       ),
                     ],
                   ),

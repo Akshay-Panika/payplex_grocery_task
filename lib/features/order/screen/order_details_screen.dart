@@ -1,13 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:payplex_grocery_task/core/constant/app_color.dart';
 import 'package:payplex_grocery_task/core/constant/app_size.dart';
 import 'package:payplex_grocery_task/core/widget/app_card.dart';
 import 'package:payplex_grocery_task/core/widget/my_appbar.dart';
 import 'package:payplex_grocery_task/features/Payment/screen/payment_screen.dart';
+import '../../../routes/app_routes.dart';
+import '../../home/controller/product_controller.dart';
+import 'package:payplex_grocery_task/features/order/controller/cart_controller.dart';
 
-class OrderDetailsScreen extends StatelessWidget {
+class OrderDetailsScreen extends StatefulWidget {
   const OrderDetailsScreen({super.key});
+
+  @override
+  State<OrderDetailsScreen> createState() => _OrderDetailsScreenState();
+}
+
+class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
+  final productController = Get.find<ProductController>();
+  final cartController = Get.find<CartController>();
+
 
   @override
   Widget build(BuildContext context) {
@@ -18,280 +34,339 @@ class OrderDetailsScreen extends StatelessWidget {
         title: 'Order Details',
         showBackButton: true,
       ),
+      
+      body:  Obx(() {
+        if (productController.isLoading.value) {
+          return CircularProgressIndicator();
+        }
 
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: const BoxDecoration(
-          color: AppColor.white,
-          border: Border(
-            top: BorderSide(
-              color: AppColor.primaryPale,
-            ),
-          ),
-        ),
-        child: SafeArea(
-          child: Row(
-            children: [
+        final selectedProducts = productController.productList.where((product) {
+          return cartController.selectedProductIds.contains(product.id);
+        }).toList();
 
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment:
-                  CrossAxisAlignment.start,
-                  children: [
+        double subtotal = 0;
 
-                    Text(
-                      "Total Price",
-                      style: GoogleFonts.poppins(
-                        fontSize: context.text12,
-                        color: AppColor.muted,
-                      ),
-                    ),
+        for (var product in selectedProducts) {
 
-                    Text(
-                      "₹360",
-                      style: GoogleFonts.poppins(
-                        fontSize: context.text22,
-                        fontWeight: FontWeight.w700,
-                        color: AppColor.title,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+          subtotal += product.isOffer
+              ? product.discountedPrice
+              : double.parse(product.productPrice);
+        }
 
-              Expanded(
-                child: SizedBox(
-                  height: 54,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentScreen(),));
-                    },
+        double deliveryFee = 0;
 
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                      AppColor.primary,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                        BorderRadius.circular(18),
-                      ),
-                    ),
+        double total = subtotal + deliveryFee;
 
-                    child: Text(
-                      "Place Order",
-                      style: GoogleFonts.poppins(
-                        fontSize: context.text14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-
-        child: Column(
-          crossAxisAlignment:
-          CrossAxisAlignment.start,
-
+        return Column(
           children: [
+            Expanded(
+              child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+              
+                  child: Column(
+                    crossAxisAlignment:
+                    CrossAxisAlignment.start,
+              
+                    children: [
+              
+                      /// Address Card
+                      AppCard(
+                        margin: EdgeInsets.zero,
+                        padding: const EdgeInsets.all(16),
+              
+                        child: Row(
+                          crossAxisAlignment:
+                          CrossAxisAlignment.start,
+              
+                          children: [
+              
+                            Container(
+                              width: 46,
+                              height: 46,
+                              decoration: BoxDecoration(
+                                color: AppColor.primaryPale,
+                                borderRadius:
+                                BorderRadius.circular(14),
+                              ),
+                              child: const Icon(
+                                Icons.location_on,
+                                color: AppColor.primary,
+                              ),
+                            ),
+              
+                            const SizedBox(width: 14),
+              
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+              
+                                children: [
+              
+                                  Text(
+                                    "Delivery Address",
+                                    style: GoogleFonts.poppins(
+                                      fontSize:
+                                      context.text14,
+                                      fontWeight:
+                                      FontWeight.w600,
+                                      color:
+                                      AppColor.title,
+                                    ),
+                                  ),
+              
+                                  const SizedBox(height: 4),
+              
+                                  Text(
+                                    "Pune, Maharashtra, India",
+                                    style: GoogleFonts.poppins(
+                                      fontSize:
+                                      context.text12,
+                                      color:
+                                      AppColor.muted,
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+              
+                            TextButton(
+                              onPressed: () {},
+              
+                              child: Text(
+                                "Change",
+                                style: GoogleFonts.poppins(
+                                  color:
+                                  AppColor.primary,
+                                  fontWeight:
+                                  FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+              
+                      if(total !=0)
+                      const SizedBox(height: 22),
+              
+                      /// Items Header
+                      if(total !=0)
+                      Row(
+                        mainAxisAlignment:
+                        MainAxisAlignment.spaceBetween,
+              
+                        children: [
+              
+                          Text(
+                            "Your Items",
+                            style: GoogleFonts.poppins(
+                              fontSize: context.text18,
+                              fontWeight: FontWeight.w700,
+                              color: AppColor.title,
+                            ),
+                          ),
+              
+                          Text(
+                            "${cartController.cartCount} Items",
+                            style: GoogleFonts.poppins(
+                              fontSize: context.text12,
+                              color: AppColor.title,
+                            ),
+                          ),
+                        ],
+                      ),
+                      if(total !=0)
+                      const SizedBox(height: 16),
+              
+                      /// Items
+                      Column(
+                        children: List.generate(
+                            selectedProducts.length,
+                              (index) {
+              
+                                final product = selectedProducts[index];
+              
+                            return orderItem(
+                              context,
+                              productId: product.id,
+                              image: product.productImage,
+                              name: product.productName,
+                              des: product.productDescription,
+              
+                              productPrice: product.productPrice,
+                              discountedPrice: product.discountedPrice,
+              
+                              isOffer: product.isOffer,
+                            );
+                          },
+                        ),
+                      ),
 
-            /// Address Card
-            AppCard(
-              margin: EdgeInsets.zero,
-              padding: const EdgeInsets.all(16),
+                      const SizedBox(height: 24),
 
-              child: Row(
-                crossAxisAlignment:
-                CrossAxisAlignment.start,
+                    ],
+                  ),
+                ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                 Padding(
+                   padding: const EdgeInsets.all(10),
+                   child: Column(
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                     children: [
+                       /// Payment Summary
+                       Text(
+                         "Payment Summary",
+                         style: GoogleFonts.poppins(
+                           fontSize: context.text18,
+                           fontWeight: FontWeight.w700,
+                           color: AppColor.title,
+                         ),
+                       ),
 
-                children: [
+                       const SizedBox(height: 14),
 
-                  Container(
-                    width: 46,
-                    height: 46,
-                    decoration: BoxDecoration(
-                      color: AppColor.primaryPale,
-                      borderRadius:
-                      BorderRadius.circular(14),
-                    ),
-                    child: const Icon(
-                      Icons.location_on,
-                      color: AppColor.primary,
+                       AppCard(
+                         margin: EdgeInsets.zero,
+                         padding: const EdgeInsets.all(16),
+
+                         child: Column(
+                           children: [
+
+                             priceRow(
+                               "Subtotal",
+                               "₹${total.toStringAsFixed(0)}",
+                             ),
+
+                             const SizedBox(height: 10),
+
+                             priceRow(
+                               "Delivery Fee",
+                               "Free",
+                             ),
+
+                             const Padding(
+                               padding:
+                               EdgeInsets.symmetric(
+                                 vertical: 14,
+                               ),
+                               child: Divider(
+                                 height: 1,
+                               ),
+                             ),
+
+                             priceRow(
+                               "Total",
+                               "₹${total.toStringAsFixed(0)}",
+                               isBold: true,
+                             ),
+                           ],
+                         ),
+                       ),
+                     ],
+                   ),
+                 ),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: const BoxDecoration(
+                    color: AppColor.white,
+                    border: Border(
+                      top: BorderSide(
+                        color: AppColor.primaryPale,
+                      ),
                     ),
                   ),
-
-                  const SizedBox(width: 14),
-
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment:
-                      CrossAxisAlignment.start,
-
+                  child: SafeArea(
+                    child: Row(
                       children: [
 
-                        Text(
-                          "Delivery Address",
-                          style: GoogleFonts.poppins(
-                            fontSize:
-                            context.text14,
-                            fontWeight:
-                            FontWeight.w600,
-                            color:
-                            AppColor.title,
+                        Expanded(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment:
+                            CrossAxisAlignment.start,
+                            children: [
+
+                              Text(
+                                "Total Price",
+                                style: GoogleFonts.poppins(
+                                  fontSize: context.text12,
+                                  color: AppColor.muted,
+                                ),
+                              ),
+
+                              Text(
+                                "₹${total.toStringAsFixed(0)}",
+                                style: GoogleFonts.poppins(
+                                  fontSize: context.text22,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColor.title,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
 
-                        const SizedBox(height: 4),
+                        Expanded(
+                          child: SizedBox(
+                            height: 54,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Get.toNamed(
+                                  AppRoutes.payment,
+                                  arguments: {
+                                    "totalAmount": total.toString(),
+                                  },
+                                );
+                                },
 
-                        Text(
-                          "Pune, Maharashtra, India",
-                          style: GoogleFonts.poppins(
-                            fontSize:
-                            context.text12,
-                            color:
-                            AppColor.muted,
-                            height: 1.5,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                AppColor.primary,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                  BorderRadius.circular(18),
+                                ),
+                              ),
+
+                              child: Text(
+                                "Place Order",
+                                style: GoogleFonts.poppins(
+                                  fontSize: context.text14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-
-                  TextButton(
-                    onPressed: () {},
-
-                    child: Text(
-                      "Change",
-                      style: GoogleFonts.poppins(
-                        color:
-                        AppColor.primary,
-                        fontWeight:
-                        FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 22),
-
-            /// Items Header
-            Row(
-              mainAxisAlignment:
-              MainAxisAlignment.spaceBetween,
-
-              children: [
-
-                Text(
-                  "Your Items",
-                  style: GoogleFonts.poppins(
-                    fontSize: context.text18,
-                    fontWeight: FontWeight.w700,
-                    color: AppColor.title,
-                  ),
-                ),
-
-                Text(
-                  "2 Items",
-                  style: GoogleFonts.poppins(
-                    fontSize: context.text12,
-                    color: AppColor.muted,
-                  ),
                 ),
               ],
-            ),
-
-            const SizedBox(height: 16),
-
-            /// Items
-            orderItem(
-              context,
-              emoji: "🍎",
-              name: "Fresh Apple",
-              qty: "2 KG",
-              price: "₹240",
-            ),
-
-            orderItem(
-              context,
-              emoji: "🥛",
-              name: "Fresh Milk",
-              qty: "2 L",
-              price: "₹120",
-            ),
-
-            const SizedBox(height: 24),
-
-            /// Payment Summary
-            Text(
-              "Payment Summary",
-              style: GoogleFonts.poppins(
-                fontSize: context.text18,
-                fontWeight: FontWeight.w700,
-                color: AppColor.title,
-              ),
-            ),
-
-            const SizedBox(height: 14),
-
-            AppCard(
-              margin: EdgeInsets.zero,
-              padding: const EdgeInsets.all(16),
-
-              child: Column(
-                children: [
-
-                  priceRow(
-                    "Subtotal",
-                    "₹360",
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  priceRow(
-                    "Delivery Fee",
-                    "₹40",
-                  ),
-
-                  const Padding(
-                    padding:
-                    EdgeInsets.symmetric(
-                      vertical: 14,
-                    ),
-                    child: Divider(
-                      height: 1,
-                    ),
-                  ),
-
-                  priceRow(
-                    "Total",
-                    "₹400",
-                    isBold: true,
-                  ),
-                ],
-              ),
-            ),
+            )
           ],
-        ),
+        );
+        }
       ),
     );
   }
 
   Widget orderItem(
       BuildContext context, {
-        required String emoji,
+        required int productId,
+        required String image,
         required String name,
-        required String qty,
-        required String price,
+        required String des,
+        required String productPrice,
+        required double discountedPrice,
+        required bool isOffer,
       }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
@@ -308,15 +383,14 @@ class OrderDetailsScreen extends StatelessWidget {
               height: 62,
               decoration: BoxDecoration(
                 color: AppColor.surface,
-                borderRadius:
-                BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(16),
               ),
 
-              child: Center(
-                child: Text(
-                  emoji,
-                  style:
-                  const TextStyle(fontSize: 30),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.network(
+                  image,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
@@ -333,26 +407,36 @@ class OrderDetailsScreen extends StatelessWidget {
                   Text(
                     name,
                     style: GoogleFonts.poppins(
-                      fontSize:
-                      context.text14,
-                      fontWeight:
-                      FontWeight.w600,
-                      color:
-                      AppColor.title,
+                      fontSize: context.text14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColor.title,
                     ),
                   ),
 
                   const SizedBox(height: 4),
 
                   Text(
-                    qty,
+                    des,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.poppins(
-                      fontSize:
-                      context.text12,
-                      color:
-                      AppColor.muted,
+                      fontSize: context.text12,
+                      color: AppColor.muted,
                     ),
                   ),
+
+                  const SizedBox(height: 6),
+
+                  /// OFFER TEXT
+                  if (isOffer)
+                    Text(
+                      "50% OFF",
+                      style: GoogleFonts.poppins(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.green,
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -363,42 +447,51 @@ class OrderDetailsScreen extends StatelessWidget {
 
               children: [
 
+                /// ORIGINAL PRICE
+                if (isOffer)
+                  Text(
+                    "₹$productPrice",
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      color: Colors.grey,
+                      decoration: TextDecoration.lineThrough,
+                    ),
+                  ),
+
+                if (isOffer)
+                  const SizedBox(height: 2),
+
+                /// FINAL PRICE
                 Text(
-                  price,
+                  isOffer
+                      ? "₹$discountedPrice"
+                      : "₹$productPrice",
+
                   style: GoogleFonts.poppins(
-                    fontSize:
-                    context.text16,
-                    fontWeight:
-                    FontWeight.w700,
-                    color:
-                    AppColor.title,
+                    fontSize: context.text16,
+                    fontWeight: FontWeight.w700,
+                    color: AppColor.title,
                   ),
                 ),
 
                 const SizedBox(height: 6),
 
-                Container(
-                  padding:
-                  const EdgeInsets.symmetric(
+                AppCard(
+                  onTap: () {
+                    cartController.toggleProduct(productId);
+                  },
+                  padding: const EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 4,
                   ),
-                  decoration: BoxDecoration(
-                    color:
-                    AppColor.primaryPale,
-                    borderRadius:
-                    BorderRadius.circular(
-                      20,
-                    ),
-                  ),
+                  color: AppColor.primaryPale,
+                  margin: EdgeInsets.zero,
                   child: Text(
-                    "Added",
+                    "Remove",
                     style: GoogleFonts.poppins(
                       fontSize: 10,
-                      fontWeight:
-                      FontWeight.w600,
-                      color:
-                      AppColor.primary,
+                      fontWeight: FontWeight.w600,
+                      color: AppColor.primary,
                     ),
                   ),
                 ),

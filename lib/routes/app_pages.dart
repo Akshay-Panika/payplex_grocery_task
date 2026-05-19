@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 
 import '../features/Order/screen/order_details_screen.dart';
+import '../features/Payment/screen/payment_screen.dart';
 import '../features/auth/binding/auth_binding.dart';
 import '../features/auth/screen/forgot_password_screen.dart';
 import '../features/auth/screen/login_screen.dart';
@@ -52,6 +53,13 @@ class AppPages {
     GetPage(
       name: AppRoutes.orderDetails,
       page: () => const OrderDetailsScreen(),
+    ),
+
+    GetPage(
+      name: AppRoutes.payment,
+      page: () => PaymentScreen(
+        totalAmount: Get.arguments['totalAmount'],
+      ),
     ),
   ];
 }

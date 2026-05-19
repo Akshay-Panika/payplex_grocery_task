@@ -7,8 +7,6 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import '../../../core/constant/app_color.dart';
 import '../../../routes/app_routes.dart';
 import '../../History/screen/history_screen.dart';
-import '../../Order/screen/order_details_screen.dart';
-import '../../Order/screen/show_order_screen.dart';
 import '../../account/screen/account_screen.dart';
 import '../../home/screen/home_screen.dart';
 import '../../offers/screen/offer_screen.dart';

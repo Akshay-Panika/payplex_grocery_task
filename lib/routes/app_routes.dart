@@ -5,4 +5,6 @@ class AppRoutes {
   static const forgotPassword = '/forgot-password';
   static const dashboard = '/dashboard';
   static const orderDetails = '/order-details';
+  static const payment = '/payment';
+
 }
