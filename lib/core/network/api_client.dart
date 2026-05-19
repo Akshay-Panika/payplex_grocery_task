@@ -1,0 +1,16 @@
+import 'package:dio/dio.dart';
+
+class ApiClient {
+
+  static final Dio dio = Dio(
+    BaseOptions(
+      baseUrl: "https://payplex-grocery-task-backend.onrender.com/api/",
+      connectTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 30),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    ),
+  );
+
+}
