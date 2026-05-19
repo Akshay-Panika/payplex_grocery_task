@@ -32,7 +32,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _screens = [
       const HomeScreen(),
       const OffersScreen(),
-      const HistoryScreen(),
+       HistoryScreen(),
       const AccountScreen(),
     ];
   }

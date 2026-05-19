@@ -6,5 +6,5 @@ class AppRoutes {
   static const dashboard = '/dashboard';
   static const orderDetails = '/order-details';
   static const payment = '/payment';
-
+  static const showOrder = '/show-order';
 }

@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 
 import '../features/Order/screen/order_details_screen.dart';
+import '../features/Order/screen/show_order_screen.dart';
 import '../features/Payment/screen/payment_screen.dart';
 import '../features/auth/binding/auth_binding.dart';
 import '../features/auth/screen/forgot_password_screen.dart';
@@ -9,6 +10,7 @@ import '../features/auth/screen/register_screen.dart';
 import '../features/dashboard/screen/dashboard_screen.dart';
 import '../features/home/binding/category_binding.dart';
 import '../features/home/binding/product_binding.dart';
+import '../features/order/binding/order_binding.dart';
 import '../features/splash/screen/splash_screen.dart';
 import 'app_routes.dart';
 
@@ -47,6 +49,7 @@ class AppPages {
       bindings: [
         CategoryBinding(),
         ProductBinding(),
+        OrderBinding(),
       ],
     ),
 
@@ -59,6 +62,13 @@ class AppPages {
       name: AppRoutes.payment,
       page: () => PaymentScreen(
         totalAmount: Get.arguments['totalAmount'],
+      ),
+    ),
+
+    GetPage(
+      name: AppRoutes.showOrder,
+      page: () => ShowOrderScreen(
+        orderId: Get.arguments,
       ),
     ),
   ];

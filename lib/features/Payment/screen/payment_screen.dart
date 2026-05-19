@@ -1,25 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:payplex_grocery_task/core/constant/app_color.dart';
 import 'package:payplex_grocery_task/core/constant/app_size.dart';
 import 'package:payplex_grocery_task/core/widget/app_card.dart';
-
 import '../../../core/widget/app_button.dart';
 import '../../../core/widget/my_appbar.dart';
+import '../../../routes/app_routes.dart';
+import '../../order/controller/cart_controller.dart';
+import '../../order/controller/order_controller.dart';
 
 class PaymentScreen extends StatefulWidget {
   final String totalAmount;
   const PaymentScreen({super.key, required this.totalAmount});
 
   @override
-  State<PaymentScreen> createState() =>
-      _PaymentScreenState();
+  State<PaymentScreen> createState() => _PaymentScreenState();
 }
 
-class _PaymentScreenState
-    extends State<PaymentScreen> {
+class _PaymentScreenState extends State<PaymentScreen> {
 
   int selectedIndex = 0;
+  final  orderController = Get.find<OrderController>();
+  final  cartController = Get.find<CartController>();
 
   final List<Map<String, dynamic>> payments = [
     {
@@ -147,116 +153,176 @@ class _PaymentScreenState
 
                   const SizedBox(height: 20),
 
-                  AppButton(
-                    text: "Pay Now",
+                  Obx(() {
 
-                    onPressed: () {
+                    return AppButton(
 
-                      showDialog(
-                        context: context,
+                      text: "Pay Now",
 
-                        builder: (context) {
-                          return AlertDialog(
-                            shape:
-                            RoundedRectangleBorder(
-                              borderRadius:
-                              BorderRadius
-                                  .circular(20),
-                            ),
+                      isLoading:
+                      orderController
+                          .isCreateOrderLoading
+                          .value,
 
-                            content: Column(
-                              mainAxisSize:
-                              MainAxisSize.min,
+                      onPressed: () async {
 
-                              children: [
+                        // SELECTED PAYMENT METHOD
+                        final paymentStatus =
+                        payments[selectedIndex]["title"];
 
-                                Container(
-                                  width: 70,
-                                  height: 70,
+                        // API CALL
+                        await orderController.createOrder(
 
-                                  decoration:
-                                  BoxDecoration(
-                                    color: Colors
-                                        .green
-                                        .shade50,
-                                    shape:
-                                    BoxShape
-                                        .circle,
-                                  ),
+                          items: cartController.selectedProductIds,
 
-                                  child:
-                                  const Icon(
-                                    Icons.check,
-                                    color: Colors
-                                        .green,
-                                    size: 40,
-                                  ),
+                          totalAmount:
+                          double.parse(
+                            widget.totalAmount,
+                          ),
+
+                          paymentStatus:
+                          paymentStatus,
+                        );
+                        if (orderController
+                            .createOrderModel != null) {
+
+                          showDialog(
+                            context: context,
+
+                            barrierDismissible: false,
+
+                            builder: (context) {
+
+                              return AlertDialog(
+
+                                shape:
+                                RoundedRectangleBorder(
+                                  borderRadius:
+                                  BorderRadius.circular(20),
                                 ),
 
-                                const SizedBox(
-                                    height: 20),
+                                content: Column(
 
-                                Text(
-                                  "Payment Successful",
-                                  style:
-                                  GoogleFonts
-                                      .poppins(
-                                    fontSize:
-                                    context
-                                        .text18,
-                                    fontWeight:
-                                    FontWeight
-                                        .w700,
-                                  ),
+                                  mainAxisSize:
+                                  MainAxisSize.min,
+
+                                  children: [
+
+                                    Container(
+
+                                      width: 70,
+                                      height: 70,
+
+                                      decoration:
+                                      BoxDecoration(
+                                        color: Colors
+                                            .green
+                                            .shade50,
+
+                                        shape:
+                                        BoxShape.circle,
+                                      ),
+
+                                      child: const Icon(
+                                        Icons.check,
+                                        color: Colors.green,
+                                        size: 40,
+                                      ),
+                                    ),
+
+                                    const SizedBox(height: 20),
+
+                                    Text(
+                                      "Payment Successful",
+
+                                      style:
+                                      GoogleFonts.poppins(
+                                        fontSize:
+                                        context.text18,
+
+                                        fontWeight:
+                                        FontWeight.w700,
+                                      ),
+                                    ),
+
+                                    const SizedBox(height: 8),
+
+                                    Text(
+                                      "Your order has been placed successfully.",
+
+                                      textAlign:
+                                      TextAlign.center,
+
+                                      style:
+                                      GoogleFonts.poppins(
+                                        fontSize:
+                                        context.text12,
+
+                                        color:
+                                        AppColor.muted,
+                                      ),
+                                    ),
+
+                                    const SizedBox(height: 12),
+
+                                    Text(
+                                      "Payment : $paymentStatus",
+
+                                      style:
+                                      GoogleFonts.poppins(
+                                        fontSize:
+                                        context.text14,
+
+                                        fontWeight:
+                                        FontWeight.w600,
+                                      ),
+                                    ),
+
+                                    const SizedBox(height: 6),
+
+                                    Text(
+                                      "Order ID : ${orderController.createOrderModel?.orderId ?? ""}",
+
+                                      style:
+                                      GoogleFonts.poppins(
+                                        fontSize:
+                                        context.text14,
+
+                                        fontWeight:
+                                        FontWeight.w700,
+                                      ),
+                                    ),
+
+                                    const SizedBox(height: 20),
+
+                                    SizedBox(
+
+                                      width:
+                                      double.infinity,
+
+                                      child: AppButton(
+
+                                        text: "Go To Home",
+
+                                        onPressed: () {
+
+                                          // DIALOG CLOSE
+                                          Navigator.pop(context);
+
+                                          // DASHBOARD OPEN
+                                          Get.offAllNamed(AppRoutes.dashboard);
+                                        },
+                                      ),
+                                    ),
+                                  ],
                                 ),
-
-                                const SizedBox(
-                                    height: 8),
-
-                                Text(
-                                  "Your order has been placed successfully.",
-                                  textAlign:
-                                  TextAlign
-                                      .center,
-
-                                  style:
-                                  GoogleFonts
-                                      .poppins(
-                                    fontSize:
-                                    context
-                                        .text12,
-                                    color:
-                                    AppColor
-                                        .muted,
-                                  ),
-                                ),
-
-                                const SizedBox(
-                                    height: 20),
-
-                                SizedBox(
-                                  width:
-                                  double.infinity,
-
-                                  child:
-                                  AppButton(
-                                    text:
-                                    "Continue",
-
-                                    onPressed:
-                                        () {
-                                      Navigator.pop(
-                                          context);
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
+                              );
+                            },
                           );
-                        },
-                      );
-                    },
-                  ),
+                        }
+                      },
+                    );
+                  })
                 ],
               ),
             ),
