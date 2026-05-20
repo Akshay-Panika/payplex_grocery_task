@@ -6,6 +6,7 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:payplex_grocery_task/core/constant/app_size.dart';
 import '../../../core/constant/app_color.dart';
+import '../../../core/utils/safe_network_image.dart';
 import '../../../core/widget/app_card.dart';
 import '../../auth/helper/auth_preferences.dart';
 import '../../order/controller/cart_controller.dart';
@@ -251,8 +252,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                           if (index != 0)
                                             Padding(
                                               padding: const EdgeInsets.all(5.0),
-                                              child: Image.network(
-                                                category['image'].toString(),
+                                              child: SafeNetworkImage(
+                                                imageUrl:category['image'].toString(),
+                                                fit: BoxFit.cover,
                                               ),
                                             ),
                                           Text(
@@ -410,9 +412,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
 
                             Expanded(
-                              child: Image.network(
-                                product.productImage,
-                                fit: BoxFit.cover,
+                              child: SafeNetworkImage(
+                                imageUrl: product.productImage,
+                                fit: BoxFit.fill,
                                 width: double.infinity,
                               ),
                             ),
