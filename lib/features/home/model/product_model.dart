@@ -1,23 +1,13 @@
 class ProductModel {
-
   final int id;
-
   final int category;
-
   final CategoryDetails categoryDetails;
-
   final String productName;
-
   final String productImage;
-
-  final String productPrice;
-
+  final double productPrice;
   final double discountedPrice;
-
   final String productDescription;
-
   final bool isOffer;
-
   final String createdAt;
 
   ProductModel({
@@ -33,67 +23,46 @@ class ProductModel {
     required this.createdAt,
   });
 
-  factory ProductModel.fromJson(
-      Map<String, dynamic> json,
-      ) {
-
+  factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
-
       id: json['id'] ?? 0,
-
       category: json['category'] ?? 0,
 
       categoryDetails: CategoryDetails.fromJson(
         json['category_details'] ?? {},
       ),
 
-      productName:
-      json['product_name']?.toString() ?? '',
+      productName: json['product_name']?.toString() ?? '',
+      productImage: json['product_image']?.toString() ?? '',
 
-      productImage:
-      json['product_image']?.toString() ?? '',
+      // 🔥 SAFE PARSING (IMPORTANT FIX)
+      productPrice: double.tryParse(
+        json['product_price']?.toString() ?? '0',
+      ) ??
+          0.0,
 
-      productPrice:
-      json['product_price']?.toString() ?? '',
+      discountedPrice: double.tryParse(
+        json['discounted_price']?.toString() ?? '0',
+      ) ??
+          0.0,
 
-      discountedPrice:
-      (json['discounted_price'] ?? 0).toDouble(),
-
-      productDescription:
-      json['product_description']?.toString() ?? '',
-
-      isOffer:
-      json['isOffer'] ?? false,
-
-      createdAt:
-      json['created_at']?.toString() ?? '',
+      productDescription: json['product_description']?.toString() ?? '',
+      isOffer: json['isOffer'] ?? false,
+      createdAt: json['created_at']?.toString() ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
-
     return {
-
       "id": id,
-
       "category": category,
-
-      "category_details":
-      categoryDetails.toJson(),
-
+      "category_details": categoryDetails.toJson(),
       "product_name": productName,
-
       "product_image": productImage,
-
       "product_price": productPrice,
-
       "discounted_price": discountedPrice,
-
-      "product_description":
-      productDescription,
-
+      "product_description": productDescription,
       "isOffer": isOffer,
-
       "created_at": createdAt,
     };
   }

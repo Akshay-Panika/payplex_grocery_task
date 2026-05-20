@@ -175,13 +175,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
                           items: cartController.selectedProductIds,
 
-                          totalAmount:
-                          double.parse(
-                            widget.totalAmount,
-                          ),
-
-                          paymentStatus:
-                          paymentStatus,
+                          totalAmount: widget.totalAmount.toString(),
+                          paymentStatus: paymentStatus,
                         );
                         if (orderController
                             .createOrderModel != null) {

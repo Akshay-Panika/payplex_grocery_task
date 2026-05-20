@@ -24,7 +24,7 @@ class OrderController extends GetxController {
 
     required List<int> items,
 
-    required double totalAmount,
+    required  String totalAmount,
 
     required String paymentStatus,
 
@@ -36,11 +36,8 @@ class OrderController extends GetxController {
 
       final response =
       await orderRepository.createOrder(
-
         items: items,
-
-        totalAmount: totalAmount,
-
+        totalAmount: totalAmount.toString(),
         paymentStatus: paymentStatus,
       );
 

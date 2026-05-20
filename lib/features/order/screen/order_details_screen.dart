@@ -49,7 +49,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
           subtotal += product.isOffer
               ? product.discountedPrice
-              : double.parse(product.productPrice);
+              : product.productPrice.toInt();
         }
 
         double deliveryFee = 0;
@@ -193,10 +193,8 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                               image: product.productImage,
                               name: product.productName,
                               des: product.productDescription,
-              
-                              productPrice: product.productPrice,
-                              discountedPrice: product.discountedPrice,
-              
+                              productPrice: product.productPrice.toStringAsFixed(0),
+                              discountedPrice: product.discountedPrice.toStringAsFixed(0),
                               isOffer: product.isOffer,
                             );
                           },
@@ -364,7 +362,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
         required String name,
         required String des,
         required String productPrice,
-        required double discountedPrice,
+        required String discountedPrice,
         required bool isOffer,
       }) {
     return Padding(

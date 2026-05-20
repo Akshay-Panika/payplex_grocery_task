@@ -224,7 +224,7 @@ class HistoryScreen extends StatelessWidget {
                             children: [
 
                               Text(
-                                order.orderId ?? "",
+                                 "#${order.orderId}",
                                 style: GoogleFonts.poppins(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w700,

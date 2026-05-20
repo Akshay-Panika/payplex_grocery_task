@@ -167,19 +167,12 @@ class _ShowOrderScreenState extends State<ShowOrderScreen> {
               
                           return orderItem(
                             context,
-              
                             productId: product.id,
-              
                             image: product.productImage,
-              
                             name: product.productName,
-              
                             des: product.productDescription,
-              
-                            productPrice: product.productPrice,
-              
+                            productPrice: product.productPrice.toStringAsFixed(0),
                             discountedPrice: product.discountedPrice,
-              
                             isOffer: product.isOffer,
                           );
                         },
@@ -272,7 +265,7 @@ class _ShowOrderScreenState extends State<ShowOrderScreen> {
                       ),
 
                       Text(
-                        currentOrder.orderId ?? "",
+                        "#${currentOrder.orderId}",
                         style: GoogleFonts.poppins(
                           fontSize: context.text14,
                           fontWeight: FontWeight.w600,

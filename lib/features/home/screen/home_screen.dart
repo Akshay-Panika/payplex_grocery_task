@@ -194,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           baseColor: Colors.grey.shade300,
                                           highlightColor: Colors.grey.shade100,
                                           child: Container(
-                                            width: 80,
+                                            width: 100,
                                             decoration: BoxDecoration(
                                               color: Colors.white,
                                               borderRadius: BorderRadius.circular(
@@ -460,7 +460,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       /// ORIGINAL PRICE
                                       if (product.isOffer == true)
                                         Text(
-                                        '₹${double.parse(product.productPrice).toInt()}',
+                                        '₹${product.productPrice.toStringAsFixed(0)}',
 
                                           style: GoogleFonts.poppins(
                                             fontSize: 12,
@@ -476,7 +476,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       Text(
                                         product.isOffer
                                             ? '₹${product.discountedPrice.toStringAsFixed(0)}'
-                                            : '₹${double.parse(product.productPrice).toInt()}',
+                                            : '₹${product.productPrice.toStringAsFixed(0)}',
 
                                         style: GoogleFonts.poppins(
                                           fontSize: context.text16,

@@ -327,7 +327,7 @@ class _OffersScreenState extends State<OffersScreen> {
 
                                       /// DISCOUNT PRICE
                                       Text(
-                                        "₹${product.discountedPrice}",
+                                        "₹${product.discountedPrice.toStringAsFixed(0)}",
 
                                         style:
                                         GoogleFonts.poppins(
@@ -346,7 +346,7 @@ class _OffersScreenState extends State<OffersScreen> {
 
                                       /// ORIGINAL PRICE
                                       Text(
-                                        "₹${product.productPrice}",
+                                        "₹${product.productPrice.toStringAsFixed(0)}",
 
                                         style:
                                         GoogleFonts.poppins(
